@@ -8,3 +8,4 @@
 - [ ] Keyed feeds (NVD key, OTX, GreyNoise, GitHub, VirusTotal, Shodan) — waiting on API keys
 - [ ] SBOM upload + parsing (CycloneDX/SPDX) and live matching
 - [x] Very detailed proposal document
+- [x] Plan: add Stack, Actors, User flows, Data flow, Sequence sections

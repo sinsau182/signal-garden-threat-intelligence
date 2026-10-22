@@ -244,6 +244,244 @@ CRA ARTICLE 14 TIMELINE (per case)
 
 ---
 
+## 7A. Stack (layer by layer)
+
+```text
+ ┌──────────────────────────────────────────────────────────────────────────┐
+ │ PRESENTATION   React 19 · TanStack Router · Tailwind v4 tokens · shadcn  │
+ │                Recharts (charts) · React Flow (graphs, client-only)      │
+ ├──────────────────────────────────────────────────────────────────────────┤
+ │ APP / SSR      TanStack Start v1 on Cloudflare Workers (workerd)         │
+ │                createServerFn per module (*.functions.ts)                │
+ │                TanStack Query (loader ensureQueryData + suspense)        │
+ ├──────────────────────────────────────────────────────────────────────────┤
+ │ PUBLIC EDGE    /api/public/cron/feed/$source  (CRON_SECRET)              │
+ │                /api/public/sbom              (hashed API key)            │
+ │                /api/public/webhooks/$provider (HMAC signature)           │
+ │                /trust/$org                   (public read-only)          │
+ ├──────────────────────────────────────────────────────────────────────────┤
+ │ DOMAIN LIBS    feeds/* adapters · normalize · correlate · risk ·         │
+ │                sbom-parse (CycloneDX/SPDX) · csaf · packageurl-js        │
+ ├──────────────────────────────────────────────────────────────────────────┤
+ │ DATA (Lovable Cloud)  Postgres + RLS · Auth (email, Google) · Storage    │
+ │                (SBOMs, evidence, CSAF) · pg_cron + pg_net schedulers     │
+ ├──────────────────────────────────────────────────────────────────────────┤
+ │ EXTERNAL       23 intel feeds · GitHub/GitLab CI · Jira/ServiceNow ·     │
+ │                Slack/email webhooks · ENISA reporting                    │
+ └──────────────────────────────────────────────────────────────────────────┘
+```
+
+| Concern | Choice | Why |
+|---|---|---|
+| Framework | TanStack Start v1 + Vite 7 | SSR + server functions in one codebase |
+| Runtime | Cloudflare Workers | Edge latency; no Node-only libs |
+| Database | Postgres (Lovable Cloud) | Relational joins component×CVE×release, RLS |
+| Auth | Lovable Cloud auth, roles in `user_roles` | Org-scoped RLS, no privilege in metadata |
+| Jobs | pg_cron → server routes | No extra infra; per-feed cadence |
+| Files | Cloud Storage buckets (private) | SBOMs, evidence, advisories |
+| Charts / graphs | Recharts / React Flow | Covers all diagrams in section 7 |
+| Testing | Vitest | Risk score, parsers, deadline math |
+| Secrets | Cloud secrets | NVD, GitHub, OTX, abuse.ch, GreyNoise, VT, Shodan |
+
+---
+
+## 7B. Actors
+
+```text
+                         ┌────────────────────────────┐
+   Security Analyst ────►│                            │◄──── PSIRT Manager
+   (triage, VEX)         │                            │      (cases, advisories, Art.14)
+                         │                            │
+   Product Owner   ────►│          vSOC              │◄──── Compliance Officer
+   (products, SBOM, fix) │                            │      (evidence, gap analysis)
+                         │                            │
+   Org Admin       ────►│                            │◄──── Executive / Viewer
+   (members, roles, keys)│                            │      (Home, reports)
+                         └──┬──────────┬──────────┬───┘
+                            │          │          │
+             ┌──────────────┘          │          └───────────────┐
+             ▼                         ▼                          ▼
+   SYSTEM ACTORS             EXTERNAL ACTORS                 PUBLIC ACTORS
+   Scheduler (pg_cron)       Intel feeds (KEV, NVD...)       Researcher (reports vuln
+   CI pipeline (SBOM POST)   Suppliers (answer requests)      via trust portal)
+   Risk engine               ENISA / CSIRT (receive notices) Customer (reads advisories)
+```
+
+| Actor | Role in app | Main screens | Permissions |
+|---|---|---|---|
+| Org Admin | admin | Settings, Members, Integrations, Audit | everything |
+| Security Analyst | analyst | Threat intel, Vulnerabilities, Finding detail | read all, write findings/VEX/watchlists |
+| PSIRT Manager | analyst | PSIRT board, Case detail, Advisories | write cases, publish advisories |
+| Product Owner | analyst | Products, Releases, SBOM, Remediation | write products/releases/SBOM |
+| Compliance Officer | analyst | Compliance, Reports | write evidence, requirements status |
+| Executive | viewer | Home, Reports | read only |
+| Scheduler | system | — | calls cron routes with secret |
+| CI pipeline | system (API key) | — | POST SBOM only |
+| Supplier | external | email link / request form | answer own request only |
+| Researcher / Customer | public | Trust portal | submit report, read published advisories |
+
+---
+
+## 7C. User flows per actor
+
+```text
+ANALYST DAILY FLOW
+ Sign in ─► Home (24h diff, next actions) ─► click "New KEV match"
+   ─► Finding detail (score waterfall, sources timeline)
+   ─► decide ─┬─ Not affected ─► write VEX justification ─► saved, audit logged
+              └─ Affected ─► assign owner + SLA ─► (score≥70/KEV) PSIRT case auto-opened
+
+PRODUCT OWNER FLOW
+ Products ─► New release ─► upload SBOM (or CI pushes it)
+   ─► components listed ─► findings appear ─► release diff vs previous
+   ─► Remediation tab "by fix" ─► mark fix released ─► analyst verifies ─► closed
+
+PSIRT MANAGER FLOW
+ PSIRT board ─► case card (clocks 24h/72h/14d) ─► triage ─► request supplier VEX
+   ─► draft advisory ─► export CSAF ─► submit ENISA notice ─► publish to trust portal ─► close
+
+COMPLIANCE FLOW
+ Compliance ─► pick framework (CRA / R155 / 21434 / 62443) ─► requirement list
+   ─► evidence auto-linked (SBOM, VEX, SLA) ─► gap analysis ─► export technical file
+
+ADMIN FLOW
+ Settings ─► invite member ─► set role ─► Integrations ─► add feed key / API key / webhook
+   ─► Sources tab shows feed turning green
+```
+
+---
+
+## 7D. Data flow
+
+### Level 0 (context)
+```text
+ Intel feeds ──CVE/IOC/actor data──►┌────────┐──advisories, notices──► ENISA / customers
+ CI / Git   ──SBOMs──────────────►│  vSOC  │──tickets, alerts────────► Jira / Slack / email
+ Users      ──decisions, VEX────►└────────┘──dashboards, reports───► Users
+ Suppliers  ──SBOM/VEX/ETAs──────►         ──requests──────────────► Suppliers
+```
+
+### Level 1 (inside vSOC)
+```text
+ [Feeds]──►(1 Ingest)──raw_items──►(2 Normalize)──►{cves, iocs, actors, techniques, advisories_ext}
+                                                        │
+ [CI/Upload]──►(3 SBOM parse)──►{sboms, components}     │
+                                     │                  │
+                                     └──►(4 Correlate)◄─┘
+                                              │
+                                              ▼
+                                          {findings}──►(5 Risk engine)──score+factors──►{findings}
+                                              │
+              ┌───────────────┬───────────────┼────────────────┬──────────────────┐
+              ▼               ▼               ▼                ▼                  ▼
+       (6 Triage/VEX)  (7 PSIRT cases)  (8 Supplier req) (9 Evidence link) (10 Notify)
+        {vex_statements} {psirt_cases,   {supplier_       {evidence}        {notifications,
+                          advisories}     requests}                          webhooks}
+              └───────────────┴───────────────┴────────────────┘
+                                              ▼
+                                  (11 Reports / Home / Trust portal)
+ Every write in 6–9 ─► {audit_log}
+```
+
+### Data stores & owners
+| Store | Written by | Read by |
+|---|---|---|
+| raw_items, feed_runs | Ingest | Sources tab, Normalize |
+| cves, iocs, actors, techniques | Normalize/Enrich | Threat intel, Correlate |
+| components, sboms | SBOM parse | Products, Correlate, Supply chain |
+| findings | Correlate, Risk engine, Analyst | Vulns, Home, PSIRT, Compliance |
+| psirt_cases, advisories | PSIRT, auto-case | PSIRT, Trust portal, Reports |
+| evidence | Evidence linker, Compliance | Compliance, Reports |
+| audit_log | DB triggers | Settings › Audit |
+
+---
+
+## 7E. Sequence diagrams (combined with actor/user flow)
+
+### S1 — Feed ingestion → auto PSIRT case → analyst triage
+```text
+ Scheduler   CronRoute     Adapter    Feed(KEV)   DB          RiskEngine   Notifier    Analyst     PSIRT Mgr
+    │  POST /cron/kev  │            │           │            │            │           │            │
+    │─────────────────►│ verify secret          │            │            │           │            │
+    │                  │──fetch(since)────────►│            │            │           │            │
+    │                  │            │──GET────►│            │            │           │            │
+    │                  │            │◄──JSON───│            │            │           │            │
+    │                  │            │──upsert raw_items, cves──────────►│            │           │            │
+    │                  │            │──correlate purl/CPE──────────────►│ findings   │           │            │
+    │                  │            │           │            │──recompute►│            │           │            │
+    │                  │            │           │            │◄─score 92─│            │           │            │
+    │                  │            │           │  KEV & ≥70 │──open case + Art.14 clocks          │            │
+    │                  │            │           │            │──────────────────────►│ alert     │            │
+    │                  │            │           │            │            │──in-app/Slack─────────►│            │
+    │                  │            │           │            │            │           │──open finding           │
+    │                  │            │           │            │◄──────────────────────────────────│ mark Affected│
+    │                  │            │           │            │──audit_log │           │            │
+    │                  │            │           │            │──────────────────────────────────────────────►│ case visible
+    │◄──200 feed_runs──│            │           │            │            │           │            │
+```
+
+### S2 — Product owner / CI uploads SBOM
+```text
+ ProductOwner/CI   App UI / /api/public/sbom   ServerFn      Storage     Parser     OSV API    DB
+     │──upload file / POST + API key──►│                     │           │          │          │
+     │                                 │──verify key/session►│           │          │          │
+     │                                 │                     │──save────►│          │          │
+     │                                 │                     │──parse───────────────►│ (CycloneDX/SPDX)
+     │                                 │                     │◄─components──────────│          │
+     │                                 │                     │──querybatch(purls)──────────────►│
+     │                                 │                     │◄─vulns──────────────────────────│
+     │                                 │                     │──insert components, findings, score────────►│
+     │                                 │                     │──diff vs previous release──────────────────►│
+     │◄───────── release page: N components, M findings, diff ───────────────────────────────────│
+```
+
+### S3 — Analyst VEX decision
+```text
+ Analyst        Finding page     ServerFn(auth)      DB (RLS)        Audit trigger   Compliance
+   │──open──────►│──load finding─►│──select─────────►│                  │              │
+   │             │◄─score factors─│◄─────────────────│                  │              │
+   │──"Not affected" + justification►│──has_role(analyst)?─►│           │              │
+   │             │                │──insert vex, score=0──►│──────────►│ audit row    │
+   │             │                │                  │──evidence link─────────────────►│ CRA Annex I
+   │◄──hidden from queue, kept for audit─────────────│                  │              │
+```
+
+### S4 — PSIRT case to published advisory
+```text
+ PSIRT Mgr    Case page    ServerFn     Supplier      DB         CSAF export   ENISA     Trust portal  Customer
+   │──triage──►│──update stage──►│────────────────────►│            │          │            │           │
+   │──request VEX──────────►│──email link──►│            │            │          │            │           │
+   │             │            │◄─VEX/ETA─────│──save──────►│            │          │            │           │
+   │──draft advisory─►│───────►│──────────────────────────►│            │          │            │           │
+   │──export CSAF────►│───────►│─────────────────────────────────────────►│ JSON      │            │           │
+   │──submit 72h notice──────►│──────────────────────────────────────────────────────►│            │           │
+   │──publish──────►│─────────►│──status=published──────►│──────────────────────────────►│ listed   │
+   │                                                                                     │◄──reads──│
+```
+
+### S5 — Sign-in and role-gated navigation
+```text
+ User      Auth page    Cloud Auth     _authenticated gate   DB (user_roles)   Home
+  │──email/Google──►│──signIn──────►│                       │                 │
+  │                 │◄──session─────│                       │                 │
+  │──navigate /────────────────────────────────►│──has_role()──►│                 │
+  │                                              │◄──analyst─────│                 │
+  │◄──────────────────────── Home (org-scoped data, role-based actions) ─────────│
+```
+
+### S6 — Supplier request loop
+```text
+ Analyst    Supply chain   ServerFn    Supplier(email)   Scheduler   DB
+   │──request SBOM/VEX/ETA──►│──insert request, due──────────────────────►│
+   │                          │──send link──►│                │           │
+   │                          │              │   (no reply)   │──daily───►│ overdue? ─► reminder
+   │                          │◄──answer─────│                │           │
+   │                          │──update scorecard (response time)─────────►│
+   │◄──supplier score + attached VEX────────────────────────────────────────│
+```
+
+---
+
 ## 8. Step-by-step phases
 
 ### Phase 1 — Accounts & database (1 week)
