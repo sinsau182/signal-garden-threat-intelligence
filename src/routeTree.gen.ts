@@ -10,33 +10,166 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComplianceRouteImport } from './routes/compliance'
+import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as ProductsRouteImport } from './routes/products'
+import { Route as PsirtRouteImport } from './routes/psirt'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SupplyChainRouteImport } from './routes/supply-chain'
+import { Route as ThreatIntelRouteImport } from './routes/threat-intel'
+import { Route as VulnerabilitiesRouteImport } from './routes/vulnerabilities'
+import { Route as ProductsIdRouteImport } from './routes/products.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplianceRoute = ComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsRoute = IntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PsirtRoute = PsirtRouteImport.update({
+  id: '/psirt',
+  path: '/psirt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplyChainRoute = SupplyChainRouteImport.update({
+  id: '/supply-chain',
+  path: '/supply-chain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThreatIntelRoute = ThreatIntelRouteImport.update({
+  id: '/threat-intel',
+  path: '/threat-intel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VulnerabilitiesRoute = VulnerabilitiesRouteImport.update({
+  id: '/vulnerabilities',
+  path: '/vulnerabilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsIdRoute = ProductsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ProductsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/integrations': typeof IntegrationsRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/psirt': typeof PsirtRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/supply-chain': typeof SupplyChainRoute
+  '/threat-intel': typeof ThreatIntelRoute
+  '/vulnerabilities': typeof VulnerabilitiesRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/integrations': typeof IntegrationsRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/psirt': typeof PsirtRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/supply-chain': typeof SupplyChainRoute
+  '/threat-intel': typeof ThreatIntelRoute
+  '/vulnerabilities': typeof VulnerabilitiesRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/integrations': typeof IntegrationsRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/psirt': typeof PsirtRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/supply-chain': typeof SupplyChainRoute
+  '/threat-intel': typeof ThreatIntelRoute
+  '/vulnerabilities': typeof VulnerabilitiesRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/compliance'
+    | '/integrations'
+    | '/products'
+    | '/psirt'
+    | '/reports'
+    | '/settings'
+    | '/supply-chain'
+    | '/threat-intel'
+    | '/vulnerabilities'
+    | '/products/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/compliance'
+    | '/integrations'
+    | '/products'
+    | '/psirt'
+    | '/reports'
+    | '/settings'
+    | '/supply-chain'
+    | '/threat-intel'
+    | '/vulnerabilities'
+    | '/products/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/compliance'
+    | '/integrations'
+    | '/products'
+    | '/psirt'
+    | '/reports'
+    | '/settings'
+    | '/supply-chain'
+    | '/threat-intel'
+    | '/vulnerabilities'
+    | '/products/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComplianceRoute: typeof ComplianceRoute
+  IntegrationsRoute: typeof IntegrationsRoute
+  ProductsRoute: typeof ProductsRouteWithChildren
+  PsirtRoute: typeof PsirtRoute
+  ReportsRoute: typeof ReportsRoute
+  SettingsRoute: typeof SettingsRoute
+  SupplyChainRoute: typeof SupplyChainRoute
+  ThreatIntelRoute: typeof ThreatIntelRoute
+  VulnerabilitiesRoute: typeof VulnerabilitiesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +181,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compliance': {
+      id: '/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations': {
+      id: '/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/psirt': {
+      id: '/psirt'
+      path: '/psirt'
+      fullPath: '/psirt'
+      preLoaderRoute: typeof PsirtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supply-chain': {
+      id: '/supply-chain'
+      path: '/supply-chain'
+      fullPath: '/supply-chain'
+      preLoaderRoute: typeof SupplyChainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/threat-intel': {
+      id: '/threat-intel'
+      path: '/threat-intel'
+      fullPath: '/threat-intel'
+      preLoaderRoute: typeof ThreatIntelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vulnerabilities': {
+      id: '/vulnerabilities'
+      path: '/vulnerabilities'
+      fullPath: '/vulnerabilities'
+      preLoaderRoute: typeof VulnerabilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/$id': {
+      id: '/products/$id'
+      path: '/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof ProductsIdRouteImport
+      parentRoute: typeof ProductsRoute
+    }
   }
 }
 
+interface ProductsRouteChildren {
+  ProductsIdRoute: typeof ProductsIdRoute
+}
+
+const ProductsRouteChildren: ProductsRouteChildren = {
+  ProductsIdRoute: ProductsIdRoute,
+}
+
+const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
+  ProductsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComplianceRoute: ComplianceRoute,
+  IntegrationsRoute: IntegrationsRoute,
+  ProductsRoute: ProductsRouteWithChildren,
+  PsirtRoute: PsirtRoute,
+  ReportsRoute: ReportsRoute,
+  SettingsRoute: SettingsRoute,
+  SupplyChainRoute: SupplyChainRoute,
+  ThreatIntelRoute: ThreatIntelRoute,
+  VulnerabilitiesRoute: VulnerabilitiesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
