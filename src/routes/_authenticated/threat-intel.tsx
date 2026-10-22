@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 
 const liveQuery = queryOptions({ queryKey: ["live-intel"], queryFn: () => getLiveIntel(), staleTime: 10 * 60_000 });
 
-export const Route = createFileRoute("/threat-intel")({
+export const Route = createFileRoute("/_authenticated/threat-intel")({
   head: () => ({
     meta: [
       { title: "Threat intelligence — vSOC" },

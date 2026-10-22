@@ -9,118 +9,157 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ComplianceRouteImport } from './routes/compliance'
-import { Route as IntegrationsRouteImport } from './routes/integrations'
-import { Route as ProductsRouteImport } from './routes/products'
-import { Route as PsirtRouteImport } from './routes/psirt'
-import { Route as ReportsRouteImport } from './routes/reports'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SupplyChainRouteImport } from './routes/supply-chain'
-import { Route as ThreatIntelRouteImport } from './routes/threat-intel'
-import { Route as VulnerabilitiesRouteImport } from './routes/vulnerabilities'
-import { Route as ProductsIdRouteImport } from './routes/products.$id'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedComplianceRouteImport } from './routes/_authenticated/compliance'
+import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
+import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
+import { Route as AuthenticatedPsirtRouteImport } from './routes/_authenticated/psirt'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSupplyChainRouteImport } from './routes/_authenticated/supply-chain'
+import { Route as AuthenticatedThreatIntelRouteImport } from './routes/_authenticated/threat-intel'
+import { Route as AuthenticatedVulnerabilitiesRouteImport } from './routes/_authenticated/vulnerabilities'
+import { Route as AuthenticatedProductsIdRouteImport } from './routes/_authenticated/products.$id'
+import { Route as ApiPublicCronFeedsRouteImport } from './routes/api/public/cron/feeds'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ComplianceRoute = ComplianceRouteImport.update({
+const AuthenticatedComplianceRoute = AuthenticatedComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const IntegrationsRoute = IntegrationsRouteImport.update({
-  id: '/integrations',
-  path: '/integrations',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsRoute = ProductsRouteImport.update({
+const AuthenticatedIntegrationsRoute =
+  AuthenticatedIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
   id: '/products',
   path: '/products',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const PsirtRoute = PsirtRouteImport.update({
+const AuthenticatedPsirtRoute = AuthenticatedPsirtRouteImport.update({
   id: '/psirt',
   path: '/psirt',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ReportsRoute = ReportsRouteImport.update({
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SupplyChainRoute = SupplyChainRouteImport.update({
-  id: '/supply-chain',
-  path: '/supply-chain',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ThreatIntelRoute = ThreatIntelRouteImport.update({
-  id: '/threat-intel',
-  path: '/threat-intel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VulnerabilitiesRoute = VulnerabilitiesRouteImport.update({
-  id: '/vulnerabilities',
-  path: '/vulnerabilities',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsIdRoute = ProductsIdRouteImport.update({
+const AuthenticatedSupplyChainRoute =
+  AuthenticatedSupplyChainRouteImport.update({
+    id: '/supply-chain',
+    path: '/supply-chain',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedThreatIntelRoute =
+  AuthenticatedThreatIntelRouteImport.update({
+    id: '/threat-intel',
+    path: '/threat-intel',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedVulnerabilitiesRoute =
+  AuthenticatedVulnerabilitiesRouteImport.update({
+    id: '/vulnerabilities',
+    path: '/vulnerabilities',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProductsIdRoute = AuthenticatedProductsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => ProductsRoute,
+  getParentRoute: () => AuthenticatedProductsRoute,
+} as any)
+const ApiPublicCronFeedsRoute = ApiPublicCronFeedsRouteImport.update({
+  id: '/api/public/cron/feeds',
+  path: '/api/public/cron/feeds',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/compliance': typeof ComplianceRoute
-  '/integrations': typeof IntegrationsRoute
-  '/products': typeof ProductsRouteWithChildren
-  '/psirt': typeof PsirtRoute
-  '/reports': typeof ReportsRoute
-  '/settings': typeof SettingsRoute
-  '/supply-chain': typeof SupplyChainRoute
-  '/threat-intel': typeof ThreatIntelRoute
-  '/vulnerabilities': typeof VulnerabilitiesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/compliance': typeof AuthenticatedComplianceRoute
+  '/integrations': typeof AuthenticatedIntegrationsRoute
+  '/products': typeof AuthenticatedProductsRouteWithChildren
+  '/psirt': typeof AuthenticatedPsirtRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/supply-chain': typeof AuthenticatedSupplyChainRoute
+  '/threat-intel': typeof AuthenticatedThreatIntelRoute
+  '/vulnerabilities': typeof AuthenticatedVulnerabilitiesRoute
+  '/products/$id': typeof AuthenticatedProductsIdRoute
+  '/api/public/cron/feeds': typeof ApiPublicCronFeedsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/compliance': typeof ComplianceRoute
-  '/integrations': typeof IntegrationsRoute
-  '/products': typeof ProductsRouteWithChildren
-  '/psirt': typeof PsirtRoute
-  '/reports': typeof ReportsRoute
-  '/settings': typeof SettingsRoute
-  '/supply-chain': typeof SupplyChainRoute
-  '/threat-intel': typeof ThreatIntelRoute
-  '/vulnerabilities': typeof VulnerabilitiesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/compliance': typeof AuthenticatedComplianceRoute
+  '/integrations': typeof AuthenticatedIntegrationsRoute
+  '/products': typeof AuthenticatedProductsRouteWithChildren
+  '/psirt': typeof AuthenticatedPsirtRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/supply-chain': typeof AuthenticatedSupplyChainRoute
+  '/threat-intel': typeof AuthenticatedThreatIntelRoute
+  '/vulnerabilities': typeof AuthenticatedVulnerabilitiesRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/products/$id': typeof AuthenticatedProductsIdRoute
+  '/api/public/cron/feeds': typeof ApiPublicCronFeedsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/compliance': typeof ComplianceRoute
-  '/integrations': typeof IntegrationsRoute
-  '/products': typeof ProductsRouteWithChildren
-  '/psirt': typeof PsirtRoute
-  '/reports': typeof ReportsRoute
-  '/settings': typeof SettingsRoute
-  '/supply-chain': typeof SupplyChainRoute
-  '/threat-intel': typeof ThreatIntelRoute
-  '/vulnerabilities': typeof VulnerabilitiesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/compliance': typeof AuthenticatedComplianceRoute
+  '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
+  '/_authenticated/products': typeof AuthenticatedProductsRouteWithChildren
+  '/_authenticated/psirt': typeof AuthenticatedPsirtRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/supply-chain': typeof AuthenticatedSupplyChainRoute
+  '/_authenticated/threat-intel': typeof AuthenticatedThreatIntelRoute
+  '/_authenticated/vulnerabilities': typeof AuthenticatedVulnerabilitiesRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/products/$id': typeof AuthenticatedProductsIdRoute
+  '/api/public/cron/feeds': typeof ApiPublicCronFeedsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/reset-password'
     | '/compliance'
     | '/integrations'
     | '/products'
@@ -131,9 +170,11 @@ export interface FileRouteTypes {
     | '/threat-intel'
     | '/vulnerabilities'
     | '/products/$id'
+    | '/api/public/cron/feeds'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/auth'
+    | '/reset-password'
     | '/compliance'
     | '/integrations'
     | '/products'
@@ -143,140 +184,192 @@ export interface FileRouteTypes {
     | '/supply-chain'
     | '/threat-intel'
     | '/vulnerabilities'
+    | '/'
     | '/products/$id'
+    | '/api/public/cron/feeds'
   id:
     | '__root__'
-    | '/'
-    | '/compliance'
-    | '/integrations'
-    | '/products'
-    | '/psirt'
-    | '/reports'
-    | '/settings'
-    | '/supply-chain'
-    | '/threat-intel'
-    | '/vulnerabilities'
-    | '/products/$id'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/compliance'
+    | '/_authenticated/integrations'
+    | '/_authenticated/products'
+    | '/_authenticated/psirt'
+    | '/_authenticated/reports'
+    | '/_authenticated/settings'
+    | '/_authenticated/supply-chain'
+    | '/_authenticated/threat-intel'
+    | '/_authenticated/vulnerabilities'
+    | '/_authenticated/'
+    | '/_authenticated/products/$id'
+    | '/api/public/cron/feeds'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ComplianceRoute: typeof ComplianceRoute
-  IntegrationsRoute: typeof IntegrationsRoute
-  ProductsRoute: typeof ProductsRouteWithChildren
-  PsirtRoute: typeof PsirtRoute
-  ReportsRoute: typeof ReportsRoute
-  SettingsRoute: typeof SettingsRoute
-  SupplyChainRoute: typeof SupplyChainRoute
-  ThreatIntelRoute: typeof ThreatIntelRoute
-  VulnerabilitiesRoute: typeof VulnerabilitiesRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiPublicCronFeedsRoute: typeof ApiPublicCronFeedsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/compliance': {
-      id: '/compliance'
+    '/_authenticated/compliance': {
+      id: '/_authenticated/compliance'
       path: '/compliance'
       fullPath: '/compliance'
-      preLoaderRoute: typeof ComplianceRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedComplianceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/integrations': {
-      id: '/integrations'
+    '/_authenticated/integrations': {
+      id: '/_authenticated/integrations'
       path: '/integrations'
       fullPath: '/integrations'
-      preLoaderRoute: typeof IntegrationsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/products': {
-      id: '/products'
+    '/_authenticated/products': {
+      id: '/_authenticated/products'
       path: '/products'
       fullPath: '/products'
-      preLoaderRoute: typeof ProductsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedProductsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/psirt': {
-      id: '/psirt'
+    '/_authenticated/psirt': {
+      id: '/_authenticated/psirt'
       path: '/psirt'
       fullPath: '/psirt'
-      preLoaderRoute: typeof PsirtRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedPsirtRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/reports': {
-      id: '/reports'
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
       path: '/reports'
       fullPath: '/reports'
-      preLoaderRoute: typeof ReportsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/supply-chain': {
-      id: '/supply-chain'
+    '/_authenticated/supply-chain': {
+      id: '/_authenticated/supply-chain'
       path: '/supply-chain'
       fullPath: '/supply-chain'
-      preLoaderRoute: typeof SupplyChainRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSupplyChainRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/threat-intel': {
-      id: '/threat-intel'
+    '/_authenticated/threat-intel': {
+      id: '/_authenticated/threat-intel'
       path: '/threat-intel'
       fullPath: '/threat-intel'
-      preLoaderRoute: typeof ThreatIntelRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedThreatIntelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/vulnerabilities': {
-      id: '/vulnerabilities'
+    '/_authenticated/vulnerabilities': {
+      id: '/_authenticated/vulnerabilities'
       path: '/vulnerabilities'
       fullPath: '/vulnerabilities'
-      preLoaderRoute: typeof VulnerabilitiesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedVulnerabilitiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/products/$id': {
-      id: '/products/$id'
+    '/_authenticated/products/$id': {
+      id: '/_authenticated/products/$id'
       path: '/$id'
       fullPath: '/products/$id'
-      preLoaderRoute: typeof ProductsIdRouteImport
-      parentRoute: typeof ProductsRoute
+      preLoaderRoute: typeof AuthenticatedProductsIdRouteImport
+      parentRoute: typeof AuthenticatedProductsRoute
+    }
+    '/api/public/cron/feeds': {
+      id: '/api/public/cron/feeds'
+      path: '/api/public/cron/feeds'
+      fullPath: '/api/public/cron/feeds'
+      preLoaderRoute: typeof ApiPublicCronFeedsRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface ProductsRouteChildren {
-  ProductsIdRoute: typeof ProductsIdRoute
+interface AuthenticatedProductsRouteChildren {
+  AuthenticatedProductsIdRoute: typeof AuthenticatedProductsIdRoute
 }
 
-const ProductsRouteChildren: ProductsRouteChildren = {
-  ProductsIdRoute: ProductsIdRoute,
+const AuthenticatedProductsRouteChildren: AuthenticatedProductsRouteChildren = {
+  AuthenticatedProductsIdRoute: AuthenticatedProductsIdRoute,
 }
 
-const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
-  ProductsRouteChildren,
-)
+const AuthenticatedProductsRouteWithChildren =
+  AuthenticatedProductsRoute._addFileChildren(
+    AuthenticatedProductsRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedComplianceRoute: typeof AuthenticatedComplianceRoute
+  AuthenticatedIntegrationsRoute: typeof AuthenticatedIntegrationsRoute
+  AuthenticatedProductsRoute: typeof AuthenticatedProductsRouteWithChildren
+  AuthenticatedPsirtRoute: typeof AuthenticatedPsirtRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSupplyChainRoute: typeof AuthenticatedSupplyChainRoute
+  AuthenticatedThreatIntelRoute: typeof AuthenticatedThreatIntelRoute
+  AuthenticatedVulnerabilitiesRoute: typeof AuthenticatedVulnerabilitiesRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedComplianceRoute: AuthenticatedComplianceRoute,
+  AuthenticatedIntegrationsRoute: AuthenticatedIntegrationsRoute,
+  AuthenticatedProductsRoute: AuthenticatedProductsRouteWithChildren,
+  AuthenticatedPsirtRoute: AuthenticatedPsirtRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSupplyChainRoute: AuthenticatedSupplyChainRoute,
+  AuthenticatedThreatIntelRoute: AuthenticatedThreatIntelRoute,
+  AuthenticatedVulnerabilitiesRoute: AuthenticatedVulnerabilitiesRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ComplianceRoute: ComplianceRoute,
-  IntegrationsRoute: IntegrationsRoute,
-  ProductsRoute: ProductsRouteWithChildren,
-  PsirtRoute: PsirtRoute,
-  ReportsRoute: ReportsRoute,
-  SettingsRoute: SettingsRoute,
-  SupplyChainRoute: SupplyChainRoute,
-  ThreatIntelRoute: ThreatIntelRoute,
-  VulnerabilitiesRoute: VulnerabilitiesRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  ApiPublicCronFeedsRoute: ApiPublicCronFeedsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { band, findings, products, riskScore } from "@/lib/data";
 import { DataTable, PageHeader, Panel, SevBadge, Stat, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/products/$id")({
+export const Route = createFileRoute("/_authenticated/products/$id")({
   loader: ({ params }) => {
     const p = products.find((x) => x.id === params.id);
     if (!p) throw notFound();

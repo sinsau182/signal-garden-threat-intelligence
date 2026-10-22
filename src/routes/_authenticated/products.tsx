@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-ro
 import { products } from "@/lib/data";
 import { Bar, PageHeader, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/products")({
+export const Route = createFileRoute("/_authenticated/products")({
   head: () => ({
     meta: [
       { title: "Products — vSOC" },

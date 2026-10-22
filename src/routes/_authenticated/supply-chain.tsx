@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { findings, products, suppliers } from "@/lib/data";
 import { Bar, DataTable, PageHeader, Panel, Stat, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/supply-chain")({
+export const Route = createFileRoute("/_authenticated/supply-chain")({
   head: () => ({
     meta: [
       { title: "Supply chain — vSOC" },

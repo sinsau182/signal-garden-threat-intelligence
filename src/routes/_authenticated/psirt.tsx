@@ -3,7 +3,7 @@ import { cases } from "@/lib/data";
 import { DataTable, PageHeader, Panel, SevBadge, Stat, Tag } from "@/components/vsoc/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const Route = createFileRoute("/psirt")({
+export const Route = createFileRoute("/_authenticated/psirt")({
   head: () => ({
     meta: [
       { title: "PSIRT — vSOC" },
