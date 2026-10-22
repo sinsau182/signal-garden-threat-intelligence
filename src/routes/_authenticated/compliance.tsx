@@ -3,7 +3,7 @@ import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer } fro
 import { craReadiness, products } from "@/lib/data";
 import { Bar, DataTable, PageHeader, Panel, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/compliance")({
+export const Route = createFileRoute("/_authenticated/compliance")({
   head: () => ({
     meta: [
       { title: "Compliance — vSOC" },

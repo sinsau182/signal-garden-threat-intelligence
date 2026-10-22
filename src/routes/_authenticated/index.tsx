@@ -3,7 +3,7 @@ import { Area, AreaChart, CartesianGrid, PolarAngleAxis, PolarGrid, Radar, Radar
 import { band, cases, craReadiness, findings, products, riskScore, riskTrend, suppliers } from "@/lib/data";
 import { Bar, DataTable, PageHeader, Panel, SevBadge, Stat, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "vSOC — Product Security Operations Center" },

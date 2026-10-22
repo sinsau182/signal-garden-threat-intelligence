@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { sources } from "@/lib/data";
 import { PageHeader, Panel, Tag } from "@/components/vsoc/ui";
 
-export const Route = createFileRoute("/integrations")({
+export const Route = createFileRoute("/_authenticated/integrations")({
   head: () => ({
     meta: [
       { title: "Integrations — vSOC" },

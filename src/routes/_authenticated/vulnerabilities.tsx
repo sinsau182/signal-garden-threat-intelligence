@@ -6,7 +6,7 @@ import { DataTable, PageHeader, Panel, SevBadge, Stat, Tag } from "@/components/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 
-export const Route = createFileRoute("/vulnerabilities")({
+export const Route = createFileRoute("/_authenticated/vulnerabilities")({
   head: () => ({
     meta: [
       { title: "Vulnerabilities — vSOC" },

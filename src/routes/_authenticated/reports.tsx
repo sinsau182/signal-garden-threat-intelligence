@@ -4,7 +4,7 @@ import { findings, riskScore } from "@/lib/data";
 import { PageHeader, Panel, Tag } from "@/components/vsoc/ui";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/reports")({
+export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({
     meta: [
       { title: "Reports — vSOC" },
