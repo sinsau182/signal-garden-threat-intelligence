@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { getFeedStatus, type FeedStatus } from "@/lib/intel.functions";
 import { sources } from "@/lib/data";
 import { PageHeader, Panel, Tag } from "@/components/vsoc/ui";
+
+const feedStatusQuery = queryOptions({ queryKey: ["feed-status"], queryFn: () => getFeedStatus(), staleTime: 5 * 60_000 });
 
 export const Route = createFileRoute("/_authenticated/integrations")({
   head: () => ({
@@ -24,15 +28,26 @@ const groups = [
 ] as const;
 
 function Integrations() {
-  const byCat = sources.reduce<Record<string, typeof sources>>((m, s) => ((m[s.category] ??= []).push(s), m), {});
+  const feedStatus = useQuery(feedStatusQuery);
+  const feeds: FeedStatus[] = feedStatus.data?.feeds ?? sources.map((s) => ({ ...s, status: "planned" as const, ms: null }));
+  const byCat = feeds.reduce<Record<string, FeedStatus[]>>((m, s) => ((m[s.category] ??= []).push(s), m), {});
   return (
     <>
-      <PageHeader eyebrow="Connections" title="Integrations" desc="Live public feeds run now; keyed feeds and tools switch on as you add credentials." />
+      <PageHeader
+        eyebrow="Connections"
+        title="Integrations"
+        desc="Live public feeds run now; keyed feeds and tools switch on as you add credentials."
+        right={feedStatus.data ? <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="pulse-dot h-2 w-2 rounded-full bg-ok" />{feedStatus.data.liveCount} feeds live now</div> : null}
+      />
       <Panel title="Threat feeds by category">
         <div className="grid gap-4 md:grid-cols-3">
           {Object.entries(byCat).map(([c, list]) => (
             <div key={c}><div className="label-caps mb-2">{c}</div>
-              <ul className="space-y-1 text-sm">{list.map((s) => <li key={s.name} className="flex justify-between"><span>{s.name}</span>{s.live ? <Tag tone="ok">live</Tag> : <Tag>{s.access}</Tag>}</li>)}</ul></div>
+              <ul className="space-y-1 text-sm">{list.map((s) => <li key={s.name} className="flex justify-between"><span>{s.name}</span>{
+                s.status === "live" ? <Tag tone="ok">● live</Tag>
+                  : s.status === "unreachable" ? <Tag tone="critical">unreachable</Tag>
+                  : <Tag>{s.access}</Tag>
+              }</li>)}</ul></div>
           ))}
         </div>
       </Panel>

@@ -3,14 +3,16 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Area, AreaChart, Bar as RBar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { getLiveIntel, queryOsv } from "@/lib/intel.functions";
-import { actors, findings, products, sources, tactics } from "@/lib/data";
+import { getLiveIntel, getNvdRecent, getFeedStatus, queryOsv } from "@/lib/intel.functions";
+import { actors, findings, products, tactics } from "@/lib/data";
 import { DataTable, PageHeader, Panel, Stat, Tag } from "@/components/vsoc/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const liveQuery = queryOptions({ queryKey: ["live-intel"], queryFn: () => getLiveIntel(), staleTime: 10 * 60_000 });
+const nvdQuery = queryOptions({ queryKey: ["live-nvd"], queryFn: () => getNvdRecent(), staleTime: 10 * 60_000 });
+const feedStatusQuery = queryOptions({ queryKey: ["feed-status"], queryFn: () => getFeedStatus(), staleTime: 5 * 60_000 });
 
 export const Route = createFileRoute("/_authenticated/threat-intel")({
   head: () => ({
@@ -28,6 +30,8 @@ const tip = { contentStyle: { background: "var(--popover)", border: "1px solid v
 
 function ThreatIntel() {
   const { data, isLoading } = useQuery(liveQuery);
+  const nvd = useQuery(nvdQuery);
+  const feedStatus = useQuery(feedStatusQuery);
   const ourCves = new Set(findings.map((f) => f.cve));
   return (
     <>
@@ -100,6 +104,21 @@ function ThreatIntel() {
               </DataTable>
             )}
           </Panel>
+          <Panel title="Newest published CVEs · NVD API 2.0 (live)" action={nvd.data?.ok ? <span className="text-xs text-muted-foreground">{nvd.data.total.toLocaleString()} total · {nvd.data.keyed ? "keyed" : "keyless"}</span> : null}>
+            {!nvd.data ? <p className="text-sm text-muted-foreground">Loading live feed…</p> : !nvd.data.ok ? <p className="text-sm text-critical">Feed error: {nvd.data.error}</p> : (
+              <DataTable head={["CVE", "Published", "CVSS", "Summary", "You"]}>
+                {nvd.data.items.map((v) => (
+                  <tr key={v.id}>
+                    <td className="font-mono text-xs text-primary"><a href={`https://nvd.nist.gov/vuln/detail/${v.id}`} target="_blank" rel="noreferrer">{v.id}</a></td>
+                    <td className="font-mono text-xs">{v.published.slice(0, 10)}</td>
+                    <td className="font-mono text-xs">{v.cvss != null ? <Tag tone={v.cvss >= 9 ? "critical" : v.cvss >= 7 ? "intel" : "primary"}>{v.cvss.toFixed(1)}</Tag> : "—"}</td>
+                    <td className="max-w-md truncate text-xs text-muted-foreground">{v.summary}</td>
+                    <td>{ourCves.has(v.id) ? <Tag tone="critical">affected</Tag> : <Tag>clear</Tag>}</td>
+                  </tr>
+                ))}
+              </DataTable>
+            )}
+          </Panel>
         </TabsContent>
 
         <TabsContent value="actors" className="mt-4">
@@ -145,19 +164,28 @@ function ThreatIntel() {
         <TabsContent value="watchlists" className="mt-4 space-y-4"><Watchlist /></TabsContent>
 
         <TabsContent value="sources" className="mt-4">
-          <Panel title={`Feed catalog · ${sources.length} sources`}>
+          <Panel
+            title={`Feed catalog · ${feedStatus.data?.total ?? "…"} sources`}
+            action={feedStatus.data ? <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="pulse-dot h-2 w-2 rounded-full bg-ok" />{feedStatus.data.liveCount} live now · probed {new Date(feedStatus.data.fetchedAt).toLocaleTimeString()}</span> : null}
+          >
             <DataTable head={["Source", "Category", "Data", "Access", "Cadence", "Status"]}>
-              {sources.map((s) => (
+              {(feedStatus.data?.feeds ?? []).map((s) => (
                 <tr key={s.name}>
                   <td><a href={s.url} target="_blank" rel="noreferrer" className="font-medium hover:text-primary">{s.name}</a></td>
                   <td className="text-xs text-muted-foreground">{s.category}</td>
                   <td className="text-xs">{s.data}</td>
                   <td><Tag tone={s.access === "Free" ? "ok" : s.access === "Free key" ? "intel" : "primary"}>{s.access}</Tag></td>
                   <td className="font-mono text-xs">{s.cadence}</td>
-                  <td>{s.live ? <Tag tone="ok">● live</Tag> : <Tag>planned</Tag>}</td>
+                  <td>
+                    {s.status === "live" ? <Tag tone="ok">● live{s.ms != null ? ` ${s.ms}ms` : ""}</Tag>
+                      : s.status === "unreachable" ? <Tag tone="critical">unreachable</Tag>
+                      : s.status === "key-required" ? <Tag tone="intel">key required</Tag>
+                      : <Tag>planned</Tag>}
+                  </td>
                 </tr>
               ))}
             </DataTable>
+            {!feedStatus.data && <p className="text-sm text-muted-foreground">Probing live feeds…</p>}
           </Panel>
         </TabsContent>
       </Tabs>

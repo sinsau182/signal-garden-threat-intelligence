@@ -1,0 +1,16 @@
+[package]
+name = "vsoc-api"
+version = "0.1.0"
+edition = "2021"
+description = "Signal Garden vSOC — Rust API service (threat-intel backend)"
+
+[dependencies]
+axum = "0.7.9"
+tokio = { version = "1.42.0", features = ["rt-multi-thread", "macros", "signal", "sync"] }
+tower-http = { version = "0.6.2", features = ["cors", "trace"] }
+reqwest = { version = "0.12.9", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+jsonwebtoken = "9.3.0"
